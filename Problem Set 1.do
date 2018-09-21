@@ -1,3 +1,4 @@
+//good preamble
 * Problem Set 1 Do File
 * Tara Carr-Lemke
 * September 21, 2018
@@ -6,7 +7,10 @@ version 15
 
 //import/export//
 
+//no! i odnt have this path! must load from online
 use "C:\Users\tdc57\AppData\Local\Temp\Temp1_2014_stata-1.zip\GSS2014.DTA"
+
+//yes!
 copy http://gss.norc.org/documents/stata/2014_stata.zip ./
 unzipfile 2014_stata.zip
 use GSS2014.DTA, clear
@@ -16,6 +20,7 @@ set more off
 
 d
 
+//no! it must be block comment!
 //Contains data from GSS2014.DTA
   obs:         2,538                          
  vars:           896                          
@@ -24,6 +29,8 @@ d
 keep excldimm immjobs immameco
 //I want to observe only three variables related to public opinion regarding immigration.
 
+//good, though var names should be little shorter and can label them with 
+// la var mpg "miles per gallon"
 rename immjobs Immigrants_Take_Jobs
 
 rename immameco Immigrants_Good_for_Economy
@@ -34,6 +41,7 @@ rename excldimm Stronger_on_Immigration
 sample 100, count
 //(2,438 observations deleted)
  
+//again, need to have block comment! 
 sum
 //
     Variable |        Obs        Mean    Std. Dev.       Min        Max
@@ -43,6 +51,7 @@ Immigrants~y |         41    2.512195    .9778024          1          5
 Immigrant_~s |         42    3.119048    1.086556          1          5
 //
 
+//good
 //There are three missing values in the data:
 //.i: Inapplicable (IAP). Respondents who are not asked to answer a specific question are assigned to IAP.
 //.d: Don't know (DK)
@@ -94,4 +103,4 @@ neither agree nor disagree |          8       19.05       54.76
                      Total |         42      100.00
 //
 					 
-					 
+//need egen etc!					 
