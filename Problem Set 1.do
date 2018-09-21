@@ -6,9 +6,10 @@ version 15
 
 //import/export//
 
-use "https://docs.google.com/uc?id=1g9U3gG9ssuU4V0dR0AmYCoNMv-0AcFI&export=download"
+use "https://docs.google.com/uc?id=1g9U3gG9ssuU4V0dR0AmYCoNMv-0AcFI&export=download",clear
+//this doesnt run--pls see instructions in the ps!
 
-//do I need the next 3 lines???
+//do I need the next 3 lines??? yes if you load data here, no if you load in the line above
 //Copy http://gss.norc.org/documents/stata/2014_stata.zip ./
 //unzipfile 2014_stata.zip
 //use GSS2014.DTA, clear
@@ -39,6 +40,7 @@ sample 100, count
  
 sum
 
+//more efficient to do block comment here
 //Table shows that about half of respondents think that a) the US should be stronger on excluding unauthorized immigration and b) that immigrants benefit the economy. There were a significant number of missing values (about half) in total. 
 //Table shows that over half of respondents believe that immigrants take jobs from US citizens.
 //I decided to take a slightly larger sample (100 instead of 50) due to the amount of missing info.
@@ -50,6 +52,7 @@ sum
 
 tab take_jobs
 
+//have to comment these out!!
 //immigrants take jobs away |      Freq.     Percent        Cum.
 ---------------------------+-----------------------------------
             agree strongly |          4        8.51        8.51
@@ -98,7 +101,7 @@ replace antiimmigrant=1 if take_jobs==1
 replace antiimmigrant=1 if take_jobs==2
 
 replace antiimmigrant=0 if take_jobs>3 & take_jobs<6
-
+ta antiimmigrant take_jobs, mi //double check!
 tab antiimmigrant
 
 //antiimmigra |
@@ -121,5 +124,5 @@ rename immjobs take_jobs
 rename immameco eco_plus
 rename excldimm tougher 
 sample 100, count
-recode take_jobs (1/2=1), gen(antiimmigrant)
+recode take_jobs (1/2=1), gen(antiimmigrant) //need to add sth like nonm=0; and can label like "yes" "no"
 tab take_jobs antiimmigrant, mi //to check for missing//
