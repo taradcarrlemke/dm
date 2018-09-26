@@ -8,7 +8,7 @@ version 15
 
 use "https://docs.google.com/uc?id=1g9U3gG9ssuU4V0dR0AmYCoNMv-0AcFI_&export=download"
 
-//do I need the next 3 lines???
+//do I need the next 3 lines??? no the above line loads lready the data; but you may also drop that one and uncoment below--either way!
 //Copy http://gss.norc.org/documents/stata/2014_stata.zip ./
 //unzipfile 2014_stata.zip
 //use GSS2014.DTA, clear
@@ -53,7 +53,7 @@ sum
 //I now tab to take a closer look at the three variables
 
 tab take_jobs 
-
+//agian this would break! need comment block!
 //immigrants take jobs away |      Freq.     Percent        Cum.
 ---------------------------+-----------------------------------
             agree strongly |          4        8.51        8.51
@@ -103,20 +103,22 @@ tab tougher, mi
 //first use generate and replace//
 
 generate antiimmigrant=. //generate empty variable
-//(100 missing values generated)
+//(100 missing values generated) no need to put this info here
 
 replace antiimmigrant=1 if take_jobs==1
 
 replace antiimmigrant=1 if take_jobs==2
-//could I use the following code instead? replace antiimmigrant=1 if take_jobs>1 & take_jobs<3
+//could I use the following code instead? replace antiimmigrant=1 if take_jobs>1 & take_jobs<3 yes!
 
 replace antiimmigrant=0 if take_jobs==4 
 
 replace antiimmigrant=0 if take_jobs==5
 
-//or could use replace antiimmigrant=0 if take_jobs>3 & take_jobs<6
+//or could use replace antiimmigrant=0 if take_jobs>3 & take_jobs<6 yes!
 
-//how can I code for neither agree nor disagree or value of 3?
+//how can I code for neither agree nor disagree or value of 3? hmmm, could make it missing or perhaps possibly assume antiimiggrant
+//given that no opinion may mean silent approval of antiimmigrant stuff, it rather depends on theory in the field than 
+//stata stuff
 
 tab antiimmigrant
 
@@ -140,7 +142,7 @@ rename immameco eco_plus
 rename excldimm tougher 
 sample 100, count
 
-recode take_jobs(1/2 =1) (4/5=0), gen(antiimmigrant)
+recode take_jobs(1/2 =1 "yes") (4/5=0 "no"), gen(antiimmigrant)
 tab antiimmigrant
 
 // RECODE of |
@@ -165,7 +167,7 @@ rename immameco eco_plus
 rename excldimm tougher 
 sample 100, count
 
-recode take_jobs (1/2=1 "yes") (4/5=0 "no"), gen(antiimmigrant)
+recode take_jobs (1/2=1 "yes") (4/5=0 "no"), gen(antiimmigrant) //great!
 tab antiimmigrant
 //
   RECODE of |
@@ -182,6 +184,9 @@ tab antiimmigrant
 //how to code 3s?
 
 tab take_jobs antiimmigrant, mi //to check for missing values
+
+//could have little better marked sections;  eg here could do:
+//----------------------------------------------------------------------------------------
 
 //now use rename, generate and replace for additional variables// 
 //I want to look at those respondents who are both college educated as well as anti-immigrant as classified by responses to immigrants take jobs
