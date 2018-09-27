@@ -13,10 +13,14 @@ set more off
 
 d
 
+/*
+
 //Contains data from GSS2014.DTA
 // obs:         2,538                          
 // vars:           896                          
 // size:     2,776,572//
+ 
+*/ 
  
 //*manipulate*//
 //*variables*//
@@ -25,6 +29,8 @@ keep excldimm immjobs immameco
 //I want to observe only three variables related to public opinion regarding immigration.
 
 rename immjobs take_jobs
+la var take_jobs "immigrants take jobs"
+d
 
 rename immameco eco_plus
 
@@ -52,6 +58,8 @@ tab take_jobs
 
 tab take_jobs, mi
 //To view the missing values. Note that over half have the IAP code.
+//can also use codebook commans:
+codebook take_jobs
 
 tab eco_plus
 
@@ -120,6 +128,8 @@ sample 100, count
 recode take_jobs (1/2=1 "yes") (4/5=0 "no"), gen(antiimmigrant)
 tab antiimmigrant //observe antiimmigrant sentiments 
 //
+recode take_jobs (1/2=1 "yes")(3=.) (4/5=0 "no"), gen(antiimmigrant)
+
   RECODE of |
   take_jobs |
 (immigrants |
