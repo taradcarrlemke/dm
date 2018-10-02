@@ -14,9 +14,9 @@ sysdir
 pwd //to see where we are
 ls //to list what we have
 
-/********************/
-/***import/export***/
-/*******************/
+/*************************/
+/***import/export/clean***/
+/************************/
 
 // First look at ILRC data
 insheet using "https://docs.google.com/uc?id=0B2oGmpM5JAVJZ0NzcVN5QVJlXzN3TVd2T3M1NDBQd3V6bGpR&export=download",clear
@@ -54,21 +54,57 @@ replace ilrctotal = 3 in 811
 //Eliminate 0 values. It is unclear what real value should be. 
 drop if ilrctotal==0
 
-tab ilrctotal, mi //I want to see the range of sanctuary levels. 75% of counties have anti-sanctuary or anti-immigrant law enforcement policies in place.
+//Eliminate missing values
+drop if ilrctotal==.
+
+//I want to see the range of sanctuary levels. I call 1-2 "anti-sanctuary." 75% of counties have anti-sanctuary or anti-immigrant law enforcement policies in place.
+tab ilrctotal, mi 
+
+keep ilrctotal state
+
 save a1, replace
+use a1, clear
+separate ilrctotal, by(state)
+list
+tab ilrctotal state
+
+///problem: how can I find the average ILRC totals by state?
+//gen avg_stateilrctotal=.
+//egen avg_ilrctotal, by(state)=mean (ilrctotal)
+//egen avg_ilrctotal=mean (ilrctotal)
+//sum avg_ilrctotal 
 
 ///Now look at Harvard YouGov data
 //Note: I had to take several samples before getting the file down to a manageable size. Command was "sample 20."
-use "https://docs.google.com/uc?id=1zkstWJAK2OPfOT-dm2x4eMq56NX3-_jT&export=download"
-tab inputstate
+use "https://docs.google.com/uc?id=1zkstWJAK2OPfOT-dm2x4eMq56NX3-_jT&export=download", clear
+sum
+tab inputstate //To view participation by state.
+//Two questions relate to immigration.
+//First is CC16_301d: most important problem is immigration
+//Question read: How important are each of these issues (a variety of issues were provided) to you? Very High/Somewhat High/Somewhat Low/Very Low/None. Immigration is one of the choices.
+//Second is CC16_331_1-9: what do you think the U.S. government should do about immigration? Select all that apply.
+tab CC16_301d //76% of participants id issue as high or very high importance
+tab CC16_331_7 //43% of participants say "illegal" immigrants should be id'ed and deported
+rename CC16_301d imm_big_problem
+rename CC16_331_7 prodeportation
+rename inputstate state
+sample 100, count
+keep imm_big_problem prodeportation state
+tab imm_big_problem  
+tab prodeportation 
+
 save a2, replace
+list
 
 /*******************/
 /***combine data***/
 /******************/
 use a1, clear //master 
-merge 1:1 state using a1
+list
+merge 1:1 state using a2
 
+use a2, clear
+merge 1:1 state using a2
 
 
 
