@@ -66,13 +66,20 @@ save a1, replace
 use a1, clear
 separate ilrctotal, by(state)
 list
-tab ilrctotal state
+tab ilrctotal state //breaks here for me:
+/*
+. tab ilrctotal state
+too many values
+r(134);
+*/
 
 ///problem: how can I find the average ILRC totals by state?
 //gen avg_stateilrctotal=.
 //egen avg_ilrctotal, by(state)=mean (ilrctotal)
 //egen avg_ilrctotal=mean (ilrctotal)
 //sum avg_ilrctotal 
+//you have wrong syntax for egen!! it is:
+//bys state: egen...
 
 ///Now look at Harvard YouGov data
 //Note: I had to take several samples before getting the file down to a manageable size. Command was "sample 20."
@@ -95,11 +102,16 @@ tab prodeportation
 
 save a2, replace
 list
+ta state //state is not unsique!
 
 /*******************/
 /***combine data***/
 /******************/
 use a1, clear //master 
+ta state //it is not unique!
+//so you need to collapse it in one dataset! and then do m:1; 
+//so one dataset would have styate level data, and the other one person level; the one for state level, needs to unique
+
 list
 merge 1:1 state using a2
 
