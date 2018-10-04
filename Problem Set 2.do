@@ -14,6 +14,7 @@ sysdir
 pwd //to see where we are
 ls //to list what we have
 
+cd C:\Users\tdc57\Desktop
 /*************************/
 /***import/export/clean***/
 /************************/
@@ -65,23 +66,17 @@ keep ilrctotal state
 save a1, replace
 use a1, clear
 tab ilrctotal state
-bys state: egen avg_ilrctotal=mean (ilrctotal) //to find the average ILRC totals by state
-collapse avg_ilrctotal, by(state)
-//is line 69 legit?????
-
-//gen avg_stateilrctotal=.
-//egen avg_ilrctotal, by(state)=mean (ilrctotal)
-//egen avg_ilrctotal=mean (ilrctotal)
-//sum avg_ilrctotal 
-
-//gen avg_stateilrctotal=.
-//bys state: egen avg_ilrctotal, by(state)=mean (ilrctotal)
-//bys state: egen avg_ilrctotal=mean (ilrctotal)
-//sum avg_ilrctotal 
+collapse ilrctotal, by(state)
+l
+save a1, replace
+//alternative code: bys state: egen avg_ilrctotal=mean (ilrctotal) //to find the average ILRC totals by state
+//sort state avg_ilrctotal ilrctotal
+//l state avg_ilrctotal ilrctotal, sepby(state)
+//drop avg_ilrctotal
 
 
 ///Now look at Harvard YouGov data
-//Note: I had to take several samples before getting the file down to a manageable size. Command was "sample 20."
+//Note: I had to take several samples before getting the file down to a manageable size. Command was "sample 20." 
 use "https://docs.google.com/uc?id=1zkstWJAK2OPfOT-dm2x4eMq56NX3-_jT&export=download", clear
 sum
 tab inputstate //To view participation by state.
@@ -94,56 +89,26 @@ tab CC16_331_7 //43% of participants say "illegal" immigrants should be id'ed an
 rename CC16_301d imm_big_problem
 rename CC16_331_7 prodeportation
 rename inputstate state
-sample 100, count
 keep imm_big_problem prodeportation state
 tab imm_big_problem  
 tab prodeportation 
-
+collapse imm_big_problem, by(state) 
 save a2, replace
 list
-collapse prodeportation, by(state)
-tab state
+//in future could also look at collapse prodeportation, by(state)
+
 
 /*******************/
 /***combine data***/
 /******************/
 use a1, clear //master 
 list
-merge 1:1 ilrctotal using a2
-
-use a2, clear
-merge 1:1 state using a2
-
-//below is adam's code
-//use a1, clear //master 
-//ta state //it is not unique!
-//so you need to collapse it in one dataset! and then do m:1; 
-//so one dataset would have state level data, and the other one person level; the one for state level, needs to unique
-//collapse inc educ, by(region)(mean is default)
-// collapse (count) id, by(marital
-//list
-//merge 1:1 state using a2
-
-//use a2, clear
-//merge 1:1 state using a2
+merge 1:1 state using a1
 
 
-////don't worry about code below
 
-gen id= _n
-keep id region
-save gss1dta., replace
-use "https://docs.google.com/uc?id=1g9U3gG9ssuU4V0dR0AmYCoNMv-0AcFI_&export=download", clear 
-gen id= _n
-keep id inc 
+ 
 
-save "https://docs.google.com/uc?id=1g9U3gG9ssuU4V0dR0AmYCoNMv-0AcFI_&export=download", replace
-d
-sum
-insheet  using "https://docs.google.com/uc?id=1g9U3gG9ssuU4V0dR0AmYCoNMv-0AcFI_&export=download", clear 
-
- // OR Now look at GSS data
-//QUESTION??? use "https://docs.google.com/uc?id=1g9U3gG9ssuU4V0dR0AmYCoNMv-0AcFI_&export=download", clear 
 
 
 
