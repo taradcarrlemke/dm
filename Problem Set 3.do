@@ -67,7 +67,7 @@ tab ilrctotal, mi //I want to see the range of sanctuary levels. I call 1-2 "ant
 
 keep ilrctotal state //I only want to analyze these variables
 
-tab ilrctotal state
+tab  state ilrctotal
 collapse ilrctotal, by(state) //I want a state average of ILRC totals
 l
 save a1, replace
@@ -161,6 +161,9 @@ use a1, clear //master
 list
 merge 1:1 state using a2 //using 
 //47 matched. 5 had master only data. 2 had using only data. PR and Guam are not surprising. 
+
+//and now may wanna save this--the purpose of merge is to get the new data!
+//later on may want to merge everything together if possible
 
 /*************************/
 /***import/export/clean***/
@@ -274,6 +277,11 @@ duplicates report
 duplicates examples
 duplicates list
 duplicates drop
+
+//would be easier just to say sth like:
+drop if immig_laws_total==.
+//and more importantly i think you miss something here (though i may be wrong!)--i guess these are over years, so
+//you should have kept year variable and then only retain years that you need
 
 drop in 1
 drop in 4
@@ -410,6 +418,11 @@ list
 merge 1:1 state using a4
 //variable state was str11, now str23 to accommodate using
 //variable state does not uniquely identify observations in the using
+//yes that's the problem--so in a4 state is not unique, and you said it is: 1:1
+use a4
+sort state
+l if state==state[_n-1] //and MI! if you fix that it merges fine
+//btw great work, almost there, wish others did that much
 
 /*************************/
 /***import/export/clean***/
