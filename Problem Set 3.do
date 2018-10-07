@@ -2,7 +2,7 @@
 * Tara Carr-Lemke
 * October 11, 2018
 
-version 15  //this ensures your grandkids will run this fine :)
+version 15  //
 set more off  //will run everything
 cap log close //to suppress error
 log using tara.txt, replace text //but before you start log, you need to close if it was opened
@@ -36,7 +36,7 @@ sort county state
 destring *, replace
 destring *, replace ignore(",")
 
-hist ilrctotal, percent //for key var of interest do a histogram or tab
+hist ilrctotal, percent //for key variable of interest do a histogram or tab
 
 //Eliminate categories of 8 and 31
 replace ilrctotal=. if ilrctotal==8
@@ -65,10 +65,10 @@ drop if ilrctotal==.
 
 tab ilrctotal, mi //I want to see the range of sanctuary levels. I call 1-2 "anti-sanctuary." 75% of counties have anti-sanctuary or anti-immigrant law enforcement policies in place.
 
-keep ilrctotal state //I only want to analyze these variables
+keep ilrctotal state //I only want to analyze these variables.
 
-tab  state ilrctotal
-collapse ilrctotal, by(state) //I want a state average of ILRC totals
+tab ilrctotal state
+collapse ilrctotal, by(state) //I want a state average of ILRC totals.
 l
 save a1, replace
 use a1, clear 
@@ -78,9 +78,9 @@ use a1, clear
 use "https://docs.google.com/uc?id=1zkstWJAK2OPfOT-dm2x4eMq56NX3-_jT&export=download", clear
 sum
 tab inputstate //To view participation by state.
-//A question relate to immigration
+//A question related to immigration
 //Question CC16_301d: most important problem is immigration
-//Question reads: How important are each of these issues (a variety of issues were provided) to you? Very High/Somewhat High/Somewhat Low/Very Low/None. Immigration is one of the choices.
+//Question reads: How important is each of these issues (a variety of issues were provided) to you? Very High/Somewhat High/Somewhat Low/Very Low/None. Immigration is one of the choices.
 tab CC16_301d //76% of participants id issue as high or very high importance
 rename CC16_301d imm_big_problem
 rename inputstate state
@@ -160,10 +160,8 @@ l
 use a1, clear //master 
 list
 merge 1:1 state using a2 //using 
-//47 matched. 5 had master only data. 2 had using only data. PR and Guam are not surprising. 
-
-//and now may wanna save this--the purpose of merge is to get the new data!
-//later on may want to merge everything together if possible
+//47 matched. 5 had master only data. 2 had using only data. PR and Guam are not surprising.
+save a3, replace
 
 /*************************/
 /***import/export/clean***/
@@ -245,7 +243,7 @@ replace state2="WY"		if state=="Wyoming"
 
 drop state
 rename state2 state
-save a3, replace
+save a4, replace
 l
 
 /*******************/
@@ -255,9 +253,9 @@ l
 
 use a1, clear //master 
 list
-merge 1:1 state using a3 //using 
+merge 1:1 state using a4 //using 
 //47 matched. 5 had master only data. 2 had using only data. PR and Guam are not surprising. 
-
+save a5, replace
 
 /*************************/
 /***import/export/clean***/
@@ -265,183 +263,164 @@ merge 1:1 state using a3 //using
 /************************/
 use https://github.com/taradcarrlemke/dm/raw/master/MI%20Correlates%20of%20State%20Policy.dta, clear
 //From Correlates of State Policy from MI State
-keep state undocumented_immigrants immig_laws_total immig_laws_accom immig_laws_restrict immig_laws_neut
+keep year state undocumented_immigrants immig_laws_total immig_laws_accom immig_laws_restrict immig_laws_neut
 drop undocumented_immigrants //this number ended up not being collected in most states, so unhelpful
 tab immig_laws_total, mi //According to this data, only 5.6% of states passed immigration laws  
-hist immig_laws_total //See that relativley few passed legislation related to immigration
-
-sort state //many duplicates in this dataset
-codebook state //to view this variable more closely 
-//I next tried a series of dup codes to eliminate large number of repeats
-duplicates report 
-duplicates examples
-duplicates list
-duplicates drop
-
-//would be easier just to say sth like:
-drop if immig_laws_total==.
-//and more importantly i think you miss something here (though i may be wrong!)--i guess these are over years, so
-//you should have kept year variable and then only retain years that you need
-
-drop in 1
-drop in 4
-drop in 5
-drop in 7
-drop in 8
-drop in 10
-drop in 12/13
-drop in 14
-drop in 16
-drop in 18
-drop in 20
-drop in 23/24
-drop in 28
-drop in 32
-drop in 33
-drop in 35
-drop in 41
-drop in 43
-drop in 45/46
-drop in 46
-drop in 49
-drop in 53
-drop in 54
-drop in 56
-drop in 58
-drop in 61/62
-drop in 62
-drop in 64
-drop in 65
-drop in 67
-drop in 69/70
-drop in 75/76
-duplicates tag, generate(dup)
-list if dup==1 //I was still trying to find a way to automate the dup process. I thought this command would keep the first instance only.
-
-drop in 2
-drop in 4
-drop in 6
-drop in 8
-drop in 10
-drop in 17
-drop in 18/19
-drop in 18
-drop in 20/21
-drop in 24
-drop in 30
-drop in 31
-drop in 33/34
-drop in 33/34
-drop in 37
-drop in 40
-drop in 43
-drop in 45
-drop in 46
-drop in 49
-
-
-//I next tried finding an automatic way to switch state names for state abbreviations.
-//I used the following commands but kept receiving errors.
-//destring *, replace
-//destring *, replace ignore(",")
-//encode state, gen(state3)
-//I then used the following commands (one example follows below) but kept running into issues with strings.
-//replace state3="AL" if state=="Alabama"
-//I also tried the following commands to take a different tack, but did not have suucess.
-//drop state
-//ren state3 state
-//gen state2=""
-//replace state2="AL" if state=="Alabama" (as one example)
-//So I decided to change abbreviations manually
-
-replace state = "AL" in 1
-replace state = "AK" in 2
-replace state = "AZ" in 3
-replace state = "AR" in 4
-replace state = "CA" in 5
-replace state = "CO" in 6
-replace state = "CT" in 7
+tab year //See the historical data on immigration laws from 1900-2017. For this paper, only interested in charting laws passed between 2007 and today. But this information is fascinating and I would like to review and match up to historical events and trends. 
+keep if year==2017 //I played around with trying to get counts for states across multiple years. I tried collapsing but did not have success. Ultimately, I decided to stick to looking at one year only for the purposes of this PS.  But I would like to return to this issue in the coming weeks.
+//For instance, I tried using collapse immig_laws_total, by(state)
+edit
+replace state = "AR" in 1
+replace state = "CT" in 2
+replace state = "VT" in 3
+replace state = "NY" in 4
+replace state = "AL" in 5
+replace state = "MI" in 6
+replace state = "NV" in 7
 replace state = "DE" in 8
-replace state = "DC" in 9
-replace state = "FL" in 10
-replace state = "GA" in 11
-replace state = "HI" in 12
-replace state = "ID" in 13
-replace state = "IL" in 14
-replace state = "IN" in 15
-replace state = "IO" in 16
-replace state = "KS" in 17
-replace state = "KY" in 18
-replace state = "LA" in 19
-replace state = "ME" in 20
-replace state = "MD" in 21
-replace state = "MA" in 22
-replace state = "MI" in 23
-replace state = "MN" in 24
-replace state = "MI" in 25
-replace state = "MO" in 26
-replace state = "MT" in 27
-replace state = "NE" in 28
-replace state = "NV" in 29
-replace state = "NH" in 30
-replace state = "NJ" in 31
-replace state = "NM" in 32
-replace state = "NY" in 33
-replace state = "NC" in 34
-replace state = "ND" in 35
-replace state = "OH" in 36
-replace state = "OK" in 37
-replace state = "OR" in 38
-replace state = "PA" in 39
-replace state = "RI" in 40
-replace state = "SC" in 41
-replace state = "SD" in 42
-replace state = "TN" in 43
-replace state = "TX" in 44
-replace state = "UT" in 45
-replace state = "VT" in 46
-replace state = "VA" in 47
-replace state = "WA" in 48
-replace state = "WV" in 49
-replace state = "WI" in 50
-replace state = "WY" in 51
 
-save a4, replace
+save a6, replace
 l
 
 /*******************/
 /***combine data***/
 /*****merge 3******/
 /******************/
-use a1, clear //master 
-list
-merge 1:1 state using a4
-//variable state was str11, now str23 to accommodate using
-//variable state does not uniquely identify observations in the using
-//yes that's the problem--so in a4 state is not unique, and you said it is: 1:1
-use a4
-sort state
-l if state==state[_n-1] //and MI! if you fix that it merges fine
-//btw great work, almost there, wish others did that much
+
+use a1, clear
+l
+merge 1:1 state using a6 //46 failed to match given the small number of states that passed immigration laws in 2017
+save a7, replace
+l
 
 /*************************/
 /***import/export/clean***/
 /******* merge 4 ********/
 /************************/
+use "https://docs.google.com/uc?id=1g9U3gG9ssuU4V0dR0AmYCoNMv-0AcFI_&export=download," 
+//decided to look at GSS for attitudes towards immigrants 
+keep region excldimm immjobs immameco
+rename immjobs take_jobs
+rename immameco eco_plus
+rename excldimm tougher 
+tab region //to get a clearer idea of regional distribution
+//NE: Connecticut, Maine, Massachusetts, New Hampshire, Rhode Island, Vermont
+//Mid Atlantic: New Jersey, New York, PA
+//South Atlantic: Delaware, District of Columbia, Maryland, Virginia, West Virginia, NC, SC, GA, FL
+//East South Central: AL, Kentucky, Mississippi, Tennessee
+//East North Central: Illinois, Indiana, Michigan, Ohio, Wisconsin
+//West South Central: Arkansas, Louisiana, Oklahoma, Texas
+//West North Central: Iowa, Kansas, Missouri, Nebraska, SD, ND, MN
+//Mountain: Colorado, Montana, Utah, Wyoming, New Mexico, Idaho, Nevada, Arizona
+//Pacific: California, Hawaii, Alaska, Oregon, Washington
+save a8, replace
+
+use a1
+l
+//will attempt to divide states into regions 
+gen region=""
+gen region1=""
+gen region2=""
+gen region3=""
+gen region4=""
+gen region5=""
+gen region6=""
+gen region7=""
+gen region8=""
+gen region9=""
+//I tried this command but I'm not having luck...replace region=1 if state==CT ME MA NH RI VT
+//Once I can categorize states into their regions, I will merge with a1. But how do I get there?
+
+//save a9, replace
 
 /*******************/
 /***combine data***/
 /*****merge 4******/
 /******************/
+//use a1, clear
+//l
+//merge 1:1 state using a9 
+//save a10, replace
 
 
 /*************************/
 /***import/export/clean***/
 /******* merge 5 ********/
 /************************/
+//I wanted to look at numbers of Hispanic and Latino population. I ran a search on the ACS.
+//I then tried to figure out how to get the data from the ACS page to Stata.
+//ls
+unzipfile ACS_17_1YR_B03003.zip
+insheet using ACS_17_1YR_B03003_with_ann.csv, clear
+rename v3 state //easier to read if I clean the variable name
+codebook state //string variable 
+replace state = "Al" in 3
+replace state = "AK" in 4
+replace state = "AR" in 5
+replace state = "AK" in 6
+replace state = "CA" in 7
+replace state = "CO" in 8
+replace state = "CT" in 9
+replace state = "DE" in 10
+replace state = "DC" in 11
+replace state = "FL" in 12
+replace state = "GA" in 13
+replace state = "HI" in 14
+replace state = "ID" in 15
+replace state = "IL" in 16
+replace state = "IN" in 17
+replace state = "IO" in 18
+replace state = "KS" in 19
+replace state = "KY" in 20
+replace state = "LA" in 21
+replace state = "ME" in 22
+replace state = "MA" in 23
+replace state = "MD" in 23
+replace state = "MA" in 24
+replace state = "MI" in 25
+replace state = "MN" in 26
+replace state = "MS" in 27
+replace state = "MS" in 28
+replace state = "MT" in 29
+replace state = "NE" in 30
+replace state = "NV" in 31
+replace state = "NH" in 32
+replace state = "NJ" in 33
+replace state = "NM" in 34
+replace state = "NY" in 35
+replace state = "NC" in 36
+replace state = "ND" in 37
+replace state = "OH" in 38
+replace state = "OK" in 39
+replace state = "OR" in 40
+replace state = "PA" in 41
+replace state = "RI" in 42
+replace state = "SC" in 43
+replace state = "SD" in 44
+replace state = "TN" in 45
+replace state = "TX" in 46
+replace state = "UT" in 47
+replace state = "VT" in 48
+replace state = "VA" in 49
+replace state = "WA" in 50
+replace state = "WV" in 51
+replace state = "WI" in 52
+replace state = "WY" in 53
+replace state = "PR" in 54
+
+rename v8 perHispanic_Latino //easier to read if I clean the variable name
+rename perHispanic_Latino Total_HisLat //I forgot that these were actual numbers and not percentages.
+//I might want to go back and tranform into percentages rather than counts. This would be easier to interpret later. 
+rename v4 Total_Population //easier to read if I clean the variable name
+drop in 1/2
+save a11, replace
 
 /*******************/
 /***combine data***/
 /*****merge 5******/
 /******************/
+//use a1, clear
+//l
+//merge 1:1 state using a11 //I get the following error message: variable state was str11, now str20 to accommodate using data's values"
+//save a12, replace
 
