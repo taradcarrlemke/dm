@@ -269,6 +269,10 @@ tab immig_laws_total, mi //According to this data, only 5.6% of states passed im
 tab year //See the historical data on immigration laws from 1900-2017. For this paper, only interested in charting laws passed between 2007 and today. But this information is fascinating and I would like to review and match up to historical events and trends. 
 keep if year==2017 //I played around with trying to get counts for states across multiple years. I tried collapsing but did not have success. Ultimately, I decided to stick to looking at one year only for the purposes of this PS.  But I would like to return to this issue in the coming weeks.
 //For instance, I tried using collapse immig_laws_total, by(state)
+//so the command should work fine but you may add a specific subcommand; remmeber that the default is (mean), so maybe
+//  collapse (count) immig_laws_total, by(state)
+//or
+// collapse (sum) immig_laws_total, by(state)
 edit
 replace state = "AR" in 1
 replace state = "CT" in 2
@@ -329,7 +333,12 @@ gen region7=""
 gen region8=""
 gen region9=""
 //I tried this command but I'm not having luck...replace region=1 if state==CT ME MA NH RI VT
+//bc thats wrong syntax! try inlist :):
+//https://www.stata.com/statalist/archive/2011-04/msg00634.html or:
+//https://www.google.com/search?q=stata+inlist&ie=utf-8&oe=utf-8&client=firefox-b-1-ab
+//so you categorize into regions and then collapse or do 1:m merge
 //Once I can categorize states into their regions, I will merge with a1. But how do I get there?
+
 
 //save a9, replace
 
@@ -422,5 +431,6 @@ save a11, replace
 //use a1, clear
 //l
 //merge 1:1 state using a11 //I get the following error message: variable state was str11, now str20 to accommodate using data's values"
+//no! that's not the error, but message :) it's not in red!
 //save a12, replace
 
