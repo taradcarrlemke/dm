@@ -405,13 +405,18 @@ save a9, replace
 /***combine data***/
 /*****merge 4******/
 /******************/
-//use a8, clear
-//l
-//merge 1:m region using a9 
-//save a10, replace
-//ERROR! variable region does not uniquely identify observations in the master data
+merge m:1 region using a9
+preserve
+use a9, clear
+ta region
+d
+collapse ilrctotal, by(region)
+ta region
+save a9-alt,replace
+restore
 
-
+merge m:1 region using a9-alt
+save a10, replace
 
 /*************************/
 /***import/export/clean***/
@@ -421,7 +426,7 @@ save a9, replace
 //Search was People/Origin/Hispanic Latino and Geography/State with PR for 2017.
 //I then tried to figure out how to get the data from the ACS page to Stata.
 //ls
-//Initially I was in th elibrary and the following worked
+//Initially I was in the library and the following worked
 //unzipfile ACS_17_1YR_B03003.zip
 //insheet using ACS_17_1YR_B03003_with_ann.csv, clear
 //But when I went home, I could not get the data.
@@ -433,10 +438,10 @@ insheet using "https://docs.google.com/uc?id=1JUm0pf7QkwQViJqOAspO-0Cd8EK8mgse&e
 
 rename v3 state //easier to read if I clean the variable name
 codebook state //string variable 
-replace state = "Al" in 3
+replace state = "AL" in 3
 replace state = "AK" in 4
-replace state = "AR" in 5
-replace state = "AK" in 6
+replace state = "AZ" in 5
+replace state = "AR" in 6
 replace state = "CA" in 7
 replace state = "CO" in 8
 replace state = "CT" in 9
@@ -453,14 +458,13 @@ replace state = "KS" in 19
 replace state = "KY" in 20
 replace state = "LA" in 21
 replace state = "ME" in 22
-replace state = "MA" in 23
 replace state = "MD" in 23
 replace state = "MA" in 24
 replace state = "MI" in 25
 replace state = "MN" in 26
 replace state = "MS" in 27
-replace state = "MS" in 28
-replace state = "MT" in 29
+replace state = "MO" in 28
+replace state = "MN" in 29
 replace state = "NE" in 30
 replace state = "NV" in 31
 replace state = "NH" in 32
@@ -489,22 +493,21 @@ replace state = "PR" in 54
 
 rename v8 perHispanic_Latino //easier to read if I clean the variable name
 rename perHispanic_Latino Total_HisLat //I forgot that these were actual numbers and not percentages.
-//I might want to go back and transform into percentages rather than counts. This would be easier to interpret later. 
+//I want to go back and transform into percentages rather than counts. This would be easier to interpret later. 
+//generate perHisLat
+//need to figure out this part for the excel sheet calculation: perHisLat==Total_HisLat/Total_Population
 rename v4 Total_Population //easier to read if I clean the variable name
 drop in 1/2
+keep state Total_HisLat Total_Population
 save a11, replace
 
 /*******************/
 /***combine data***/
 /*****merge 5******/
 /******************/
-//use a1, clear
-//l
-//merge 1:1 state using a11 
-//save a12, replace
+use a1, clear
+l
+merge 1:1 state using a11 
+//ERROR variable state does not uniquely identify observations in the using data
+save a12, replace
 
-********
-//use after use a1 clear
-//destring *, replace
-//destring *, replace ignore(",")
-//merge m:1 using a11
