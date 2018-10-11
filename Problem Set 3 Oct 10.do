@@ -405,16 +405,12 @@ save a9, replace
 /***combine data***/
 /*****merge 4******/
 /******************/
-merge m:1 region using a9
-preserve
 use a9, clear
 ta region
 d
 collapse ilrctotal, by(region)
 ta region
 save a9-alt,replace
-restore
-
 merge m:1 region using a9-alt
 save a10, replace
 
