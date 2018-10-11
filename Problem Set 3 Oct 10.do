@@ -457,7 +457,7 @@ replace state = "ME" in 22
 replace state = "MD" in 23
 replace state = "MA" in 24
 replace state = "MI" in 25
-replace state = "MN" in 26
+replace state = "MT" in 26
 replace state = "MS" in 27
 replace state = "MO" in 28
 replace state = "MN" in 29
@@ -503,8 +503,6 @@ save a11, replace
 /******************/
 use a1, clear
 l
-merge 1:1 state using a11 
-//ERROR variable state does not uniquely identify observations in the using data
-//I tabulated state on both data sets and am coming up with a frequency of 1, so I am unsure what is wrong
+merge 1:1 state using a11 //49 matched; PR and Guam did not match; 3 with missing data
 save a12, replace
 
