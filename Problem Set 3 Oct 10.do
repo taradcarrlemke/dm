@@ -54,7 +54,7 @@ hist ilrctotal, percent //to check and see if data looks cleaned
 
 //Eliminate missing values
 drop if ilrctotal==.
-
+/*
 //Explain what the 7 valid categories are: 
 //1) No 287(g) agreement with Immigration and Customs Enforcement (ICE) 
 //2) No contract with ICE to detain immigrants in county detention facilities 
@@ -64,13 +64,16 @@ drop if ilrctotal==.
 //6) Prohibition against asking about immigration status
 //7) General prohibition on providing assistance and resources to ICE to enforce civil immigration laws
 //ILRC assigns a "1" for each category above for which the county is implementing the policy. Aggregates total. Lists total in "ILRC Total" category.
-
+*/
 tab ilrctotal, mi //I want to see the range of sanctuary levels. I call 1-2 "anti-sanctuary." 75% of counties have anti-sanctuary or anti-immigrant law enforcement policies in place.
 
 keep ilrctotal state //I only want to analyze these variables.
 
 tab ilrctotal state
+tab  state ilrctotal, row
+
 collapse ilrctotal, by(state) //I want a state average of ILRC totals.
+// collapse (median) ilrctotal, by(state) 
 l
 save a1, replace
 
@@ -161,6 +164,18 @@ l
 use a1, clear //master 
 list
 merge 1:1 state using a2 //using 
+l state if _merge==1
+//we have a problem so need to rename in one nb to ne
+//and then 
+
+//drop those rthat you dont need, assuming that using variabkes
+//only usefuke if they match a1, if they doint match
+//can drop them si
+drop if _merge==2
+
+//after exanination, remembner to 
+drop _merge
+
 //47 matched. 5 had master only data. 2 had using only data. PR and Guam are not surprising.
 save a3, replace
 
@@ -253,6 +268,8 @@ l
 /******************/
 
 use a1, clear //master 
+use a3, clear //so here probbaly start with something already merged earleir
+
 list
 merge 1:1 state using a4 //using 
 //47 matched. 5 had master only data. 2 had using only data. PR and Guam are not surprising. 
@@ -262,6 +279,12 @@ save a5, replace
 /***import/export/clean***/
 /******* merge 3 ********/
 /************************/
+
+//can also do this:
+describe using  https://github.com/taradcarrlemke/dm/raw/master/MI%20Correlates%20of%20State%20Policy.dta
+use year state undocumented_immigrants immig_laws_total immig_laws_accom immig_laws_restrict immig_laws_neut using https://github.com/taradcarrlemke/dm/raw/master/MI%20Correlates%20of%20State%20Policy.dta, clear
+
+
 use https://github.com/taradcarrlemke/dm/raw/master/MI%20Correlates%20of%20State%20Policy.dta, clear
 //From Correlates of State Policy from MI State
 keep year state undocumented_immigrants immig_laws_total immig_laws_accom immig_laws_restrict immig_laws_neut
@@ -350,20 +373,16 @@ rename immjobs take_jobs
 rename immameco eco_plus
 rename excldimm tougher 
 tab region //to get a clearer idea of regional distribution
-//NE: Connecticut, Maine, Massachusetts, New Hampshire, Rhode Island, Vermont
-//Mid Atlantic: New Jersey, New York, PA
-//South Atlantic: Delaware, District of Columbia, Maryland, Virginia, West Virginia, NC, SC, GA, FL
-//East South Central: AL, Kentucky, Mississippi, Tennessee
-//East North Central: Illinois, Indiana, Michigan, Ohio, Wisconsin
-//West South Central: Arkansas, Louisiana, Oklahoma, Texas
-//West North Central: Iowa, Kansas, Missouri, Nebraska, SD, ND, MN
-//Mountain: Colorado, Montana, Utah, Wyoming, New Mexico, Idaho, Nevada, Arizona
-//Pacific: California, Hawaii, Alaska, Oregon, Washington
+
 save a8, replace
 l
 
 use a1
 l
+//check which ones non unique
+sort state
+count if state==state[_n-1]
+l if state==state[_n-1]
 
 //information from previous file a8
 /*1  new england
@@ -377,7 +396,17 @@ l
 9  pacific
 */
 
+//NE: Connecticut, Maine, Massachusetts, New Hampshire, Rhode Island, Vermont
+//Mid Atlantic: New Jersey, New York, PA
+//South Atlantic: Delaware, District of Columbia, Maryland, Virginia, West Virginia, NC, SC, GA, FL
+//East South Central: AL, Kentucky, Mississippi, Tennessee
+//East North Central: Illinois, Indiana, Michigan, Ohio, Wisconsin
+//West South Central: Arkansas, Louisiana, Oklahoma, Texas
+//West North Central: Iowa, Kansas, Missouri, Nebraska, SD, ND, MN
+//Mountain: Colorado, Montana, Utah, Wyoming, New Mexico, Idaho, Nevada, Arizona
+//Pacific: California, Hawaii, Alaska, Oregon, Washington
 generate region=.
+//replace region= 1 if inlist(state, "CT","ME","RI","MA","NH","VT") 
 replace region= 1 if state == "CT" | state == "ME" | state == "RI" | state == "MA" | state == "NH" | state=="VT"
 replace region= 2 if state == "NY" | state == "NJ" | state == "PA"
 replace region= 3 if state == "IL" | state == "IN" | state == "MI" | state == "OH" | state == "WI"
