@@ -421,17 +421,17 @@ save a10, replace
 //I wanted to look at numbers of Hispanic and Latino population. I ran a search on the ACS US Census.
 //Search was People/Origin/Hispanic Latino and Geography/State with PR for 2017.
 //I then tried to figure out how to get the data from the ACS page to Stata.
-//ls
 //Initially I was in the library and the following worked
+//ls
 //unzipfile ACS_17_1YR_B03003.zip
 //insheet using ACS_17_1YR_B03003_with_ann.csv, clear
 //But when I went home, I could not get the data.
 //Next I tried uploading and downloading to Git Hub, but something was not working...I tried the following:
 //use https://github.com/taradcarrlemke/dm/raw/master/ACS_17_1YR_B03003_metadata.csv, clear
 //use https://github.com/taradcarrlemke/dm/raw/master/ACS_17_1YR_B03003_with_ann.csv.dta, clear
+//So I ended up using Google drive
 
 insheet using "https://docs.google.com/uc?id=1JUm0pf7QkwQViJqOAspO-0Cd8EK8mgse&export=download", clear
-
 rename v3 state //easier to read if I clean the variable name
 codebook state //string variable 
 replace state = "AL" in 3
@@ -505,5 +505,6 @@ use a1, clear
 l
 merge 1:1 state using a11 
 //ERROR variable state does not uniquely identify observations in the using data
+//I tabulated state on both data sets and am coming up with a frequency of 1, so I am unsure what is wrong
 save a12, replace
 
