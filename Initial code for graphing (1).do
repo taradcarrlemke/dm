@@ -1,6 +1,5 @@
 //merge m:m almost never make sense!!
-//you have state level or region level data, so i would do a lot of barcharts and maybe boxplots; and for continous
-//do scatterplots with points marked with state code
+
 
 * Problem Set 4 Do File PREP
 * Tara Carr-Lemke
@@ -121,11 +120,15 @@ save ILRC_Region, replace
 tabstat ilrctotal, by(state)
 
 tabstat ilrctotal, by(region)
-//can also do sd; and format
-
-graph bar ilrctotal, over(region) //make the region labels smaller !
+tabstat ilrctotal, by(region) stat(mean sd)
+graph hbar ilrctotal, over(region) //make the region labels smaller !
 
 scatter ilrctotal region
+graph hbox ilrctotal, over(region)
+l if region==9 & ilrctotal>4
+d ilrctotal
+d region
+codebook region
 
 
 
@@ -225,6 +228,7 @@ keep region excldimm immjobs immameco
 rename immjobs take_jobs
 rename immameco eco_plus
 rename excldimm tougher 
+// findit revrs
 tab region //to get a clearer idea of regional distribution
 //NE: Connecticut, Maine, Massachusetts, New Hampshire, Rhode Island, Vermont
 //Mid Atlantic: New Jersey, New York, PA
@@ -241,14 +245,19 @@ use ILRC_Region, clear
 l
 //m:m almost never make sense!!
 merge m:m region using AttitudesImm_GSS
+//m:1 on state???
 save ILRCRegion_AttitudesImm_GSSMERGE, replace 
 
 
 //then tables and tabs and grapghs 
-tab ilrctotal tougher
+tab ilrctotal tougher, row
+tw(lfit ilrctotal tougher)
+corr ilrctotal tougher
+graph hbar ilrctotal tougher, over(region)
+tw(lfit ilrctotal eco_plus)
 table ilrctotal tougher
-table ilrctotal tougher region
-hist ilrctotal tougher
+table ilrctotal tougher region //better if catergorical
+hist ilrctotal, by(region)
 scatter ilrctotal tougher
 
 /*sysuse  nlsw88 , clear
