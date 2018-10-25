@@ -1,3 +1,6 @@
+//merge m:m almost never make sense!!
+
+
 * Problem Set 4 Do File PREP
 * Tara Carr-Lemke
 * October 25, 2018
@@ -234,6 +237,7 @@ save AttitudesImm_GSS, replace
 
 use ILRC_Region, clear
 l
+//m:m almost never make sense!!
 merge m:m region using AttitudesImm_GSS
 save ILRCRegion_AttitudesImm_GSSMERGE, replace 
 
