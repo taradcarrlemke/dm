@@ -1,5 +1,6 @@
 //merge m:m almost never make sense!!
-
+//you have state level or region level data, so i would do a lot of barcharts and maybe boxplots; and for continous
+//do scatterplots with points marked with state code
 
 * Problem Set 4 Do File PREP
 * Tara Carr-Lemke
@@ -120,6 +121,7 @@ save ILRC_Region, replace
 tabstat ilrctotal, by(state)
 
 tabstat ilrctotal, by(region)
+//can also do sd; and format
 
 graph bar ilrctotal, over(region) //make the region labels smaller !
 
