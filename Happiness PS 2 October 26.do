@@ -1,3 +1,9 @@
+//this is great! still may want to reorganize code a bit and clean up; eg print it out and see what is repetetive and esspecially
+//what can be moved and fitted better elsewhere
+
+//next step is to visualize and strat inserting key ouput into paper and discussing it there in depth
+//and move on to test your research hypotheses
+
 * Problem Set 2 Do File
 * Tara Carr-Lemke
 * Happiness Class
@@ -38,7 +44,7 @@ replace ilrctotal=. if ilrctotal==8
 replace ilrctotal=. if ilrctotal==31
 
 //Correct addition error
-replace ilrctotal = 3 in 811
+replace ilrctotal = 3 if jailorprisonc=="Dyersburg" //this is more bullet proof; 811 obs would change if you change sth little
 
 //Eliminate 0 values. It is unclear what real value should be. 
 drop if ilrctotal==0
@@ -60,11 +66,12 @@ tab ilrctotal, mi //I want to see the range of sanctuary levels. I call 1-2 "ant
 hist ilrctotal, percent //to check and see if data looks cleaned and to get visual
 keep ilrctotal state county jurisdiction //I only want to analyze these variables.
 tab state ilrctotal 
-drop in 1 //drop Puerto Rico
-drop in 944 //drop Guam
-//why couldn't I use drop if state==Puerto_Rico command???
+drop if state=="Puerto Rico" | state=="Guam" //again like earlier! this is safer, and easy see what is the condition for dropping
+//why couldn't I use drop if state==Puerto_Rico command??? yes you can just put in quotes
+
 histogram ilrctotal, percent title(Nationwide Sanctuary Rankings) legend(on) clegend(on) //better visual
 collapse ilrctotal, by(state) //I want a state average of ILRC totals.
+//for later: with collapse can aslo specify sd, median etc, all in one command--see help collapse
 l
 save ILRCforHappinessClass, replace
 
@@ -74,11 +81,16 @@ save ILRCforHappinessClass, replace
 use "https://docs.google.com/uc?id=1zkstWJAK2OPfOT-dm2x4eMq56NX3-_jT&export=download", clear
 sum
 tab inputstate //To view participation by state. No data for Alaska.
+tab inputstate,plot //Tbetter visual
+tab inputstate,plot sort //another visiual from lo to high
 //A question related to immigration
 //Question CC16_301d: most important problem is immigration
 //Question reads: How important is each of these issues (a variety of issues were provided) to you? Very High/Somewhat High/Somewhat Low/Very Low/None. Immigration is one of the choices.
 tab CC16_301d //76% of participants id issue as high or very high importance
 rename CC16_301d imm_big_problem
+//just replabel and can then droop from comments:) same for others
+la var imm_big_problem "most important problem is immigration"
+
 rename inputstate state
 keep imm_big_problem state
 tab imm_big_problem, mi  //about 25% of total respondents identified immigration as one of their top issue
@@ -158,6 +170,11 @@ drop _merge
 save ILRCandImmBigProbforHappinessClassMERGE, replace
 
 use ILRCandImmBigProbforHappinessClassMERGE, clear
+//yep tables and graphs make sense, and totally fie to have a lot of them
+//but put quick comments what you found in them interesting as a comment as a note in graph
+//that way when you write paper you wont forget it
+//and put in the body of the paper only the most important ones
+//othgers are just for you or perhaps into the appendix or supplementry online material
 
 tabstat ilrctotal imm_big_problem
 tabstat ilrctotal imm_big_problem, by(state)
@@ -165,11 +182,12 @@ corr ilrctotal imm_big_problem
 
 //dependent var (immi big problem) on Y axis and indep (ilrctotal) on x axis 
 
-scatter ilrctotal imm_big_problem, jitter(10)
+scatter ilrctotal imm_big_problem, jitter(1)ms(Oh)
+scatter ilrctotal imm_big_problem, jitter(1)ms(Oh)mlab(state) mlabsize(vsmall)
 
 twoway (scatter imm_big_problem ilrctotal, sort), title(Sanctuary Rankings and Views on Immigration by State)
 
-twoway (scatter imm_big_problem ilrctotal, msize(small) msymbol(circle_hollow) sort), title(Sanctuary Rankings and Views on Immigration by State)
+twoway (scatter imm_big_problem ilrctotal, msize(small) msymbol(circle_hollow) mlab(state) mlabsize(vsmall) sort), title(Sanctuary Rankings and Views on Immigration by State)note(we see that state x and y are higher on z than expected etc)
 
 twoway (lfit imm_big_problem ilrctotal) (scatter imm_big_problem ilrctotal), ytitle(Immigration is Big Problem) xtitle(Sanctuary Level) title(Sanctuary Rankings and Views on Immigration by State) legend(on)
 
@@ -223,11 +241,12 @@ tab region //to get a clearer idea of regional distribution
 
 tab happy tougher
 tab happy take_jobs, row
-histogram tougher
+histogram tougher, by(region)
 //when I merge the ILRC total data, can I look at happiness in states with or without sanctuary policies
 save AttitudesImmigandGovt_GSSforHappinessClass, replace
 //can't merge this with state-level--must merge with regional level 
 
+//this chunk here could just move to the to where you did that dataset--would be cleaner :)
 use ILRCforHappinessClass, clear 
 l
 sort state
@@ -272,6 +291,9 @@ save ILRC_Region_forHappinessClass, replace
 *******************************
 *******Manipulate and Merge****
 *******************************
+//so looks like everything has at least state, except gss
+//so i would merger everything on state, and then on region with gss (m:1)
+
 use ILRC_Region_forHappinessClass, clear
 ta region
 d
@@ -281,7 +303,7 @@ l
 use AttitudesImmigandGovt_GSSforHappinessClass, clear
 tab region
 collapse tougher, by(region)
-merge m:1 region using ILRC_Region_forHappinessClass
+merge 1:m region using ILRC_Region_forHappinessClass //just the other way round :) 1:m
 //issue with using data and unique values again--getting error 
 //once I have this figured out, I would also like to use a number of variables from GSS on merge.  Do I need to do so separately?
 save ILRC_RegionandAttitudesImmigandGovtforHappinessClassMERGE, replace
