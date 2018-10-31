@@ -1,3 +1,8 @@
+/*
+not neseccarily the best way to do it, but i always merge first and then do graphs and descriptive stats
+on the final merged file; and again could organize a bit better--move chunks of code around, may even print this out to do it
+interesting data and lots of information--now time to start writing this up and include results in youyr writeup! good job!
+*/
 * Problem Set 4 Do File
 * Tara Carr-Lemke
 * Data Management Class
@@ -41,11 +46,15 @@ replace ilrctotal = 3 in 811 //Correct addition error
 drop if ilrctotal==0 //Eliminate 0 values. It is unclear what real value should be. 
 drop if ilrctotal==. //Eliminate misisng values
 drop if state=="Puerto Rico" | state=="Guam" 
-tab ilrctotal, mi //I want to see the range of sanctuary levels. Over 75% of counties have anti-sanctuary in place.
+tab ilrctotal, mi plot //I want to see the range of sanctuary levels. Over 75% of counties have anti-sanctuary in place.
 graph hbar (mean) no287g (mean) noicedetentioncontract (mean) noiceholds (mean) noicealerts (mean) limitsoniceinterrogationsinjail (mean) prohibitiononaskingaboutimmigrat (mean) generalprohibitiononassistanceto, title(Types and frequency of sanctuary status policies) bar(1, fcolor(gs10))bar(1, fcolor(gs10)) bar(2, fcolor(gs10))bar(3, fcolor(gs10))bar(4, fcolor(gs10)) bar(5, fcolor(gs10)) bar(6, fcolor(gs10)) bar(7, fcolor(gs10)) blabel(name, position(base)) legend(off)
+//could beutify it, notably add nice labels for bars--play with GUI
 //Interesting graph because we can observe the most and least used county policies for collaboration with immigration enforcement. Highly skewed.
 keep ilrctotal state county jurisdiction //I only want to analyze these variables.
-tab state ilrctotal //I want to see the breakdowns 
+tab state ilrctotal //I want to see the breakdowns kind of difficult to comprehend, maybe better summarize:
+gr hbar (mean) ilrctotal, over(state) //just make labels smaller, say figure out the code through GUI
+gr hbar (median) ilrctotal, over(state)
+gr hbar (sd) ilrctotal, over(state)
 tabstat ilrctotal //National mean of sanctuary status is 2.37.
 
 ///Visualize ILRC data
@@ -78,6 +87,9 @@ l //everything appears to check out
 label define reg_label 1 "New England" 2 "MidAtlantic" 3 "NE Central" 4 "NW Central" 5 "South Atlantic" 6 "SE Central" 7 "SW Central"  8 "Mountain" 9 "Pacific"
 label values region reg_label
 graph hbar (mean) ilrctotal if region, over(region) ytitle(Mean of Sanctuary Status) title(Sanctuary Status by Region) legend(on)note(There are higher levels of sanctuary policy in New England and the Pacific.)
+graph hbar (median) ilrctotal if region, over(region) ytitle(Mean of Sanctuary Status) title(Sanctuary Status by Region) legend(on)note(There are higher levels of sanctuary policy in New England and the Pacific.)
+graph hbar (sd) ilrctotal if region, over(region) ytitle(Mean of Sanctuary Status) title(Sanctuary Status by Region) legend(on)note(There are higher levels of sanctuary policy in New England and the Pacific.)
+
 save ILRC_Region_forHappinessClass, replace
 
 tabstat ilrctotal, by(region) //Mean of sanctuary status by region is 2.5. NE and Pacific have highest status. SW Central and NW Central have lowest.
@@ -100,6 +112,7 @@ drop _merge
 l
 save ILRC_RegionandTooToughforHappinessClassMERGE, replace
 use ILRC_RegionandTooToughforHappinessClassMERGE, clear
+//seems like missing some vars below
 twoway (scatter too_tough ilrctotal, msize(small) msymbol(circle_hollow) mlabel(state) mlabsize(vsmall)), ytitle(US should not be tougher on immigration) xtitle(Sanctuary Status) title(Sanctuary Status and Immigration Policy), lfit too_tough ilrctotal, jitter(1)ms(Oh)
 
 //Merge to look at immcrime
