@@ -169,8 +169,8 @@ tab trust_in_govt, mi //only about 49% of total survey responded.
 //Out of those who did, only about 21% "trust people in govt." About 26% neither agreed nor disagreed. Over 50% disagreed.
 tab happy trust_in_govt, row column
 tabstat happy trust_in_govt, by(region)
-*/very happy is a 1. should I reverse the order and make very happy a 3?
-
+very happy is a 1. should I reverse the order and make very happy a 3? yes!
+*/
 //Merge ILRC Sanctuary with GSS Trust and Confidence
 use ILRC_Region_forHappinessClass, clear
 ta region
@@ -253,6 +253,7 @@ reg dem10fut ilrctotal //ran a regression
 //run some more regressions on American democracy 
 findit outreg2
 use ILRC_RegionandDemTodayforHappinessClassMERGE, clear
+//demtoday is continous, just use regress (ols)
 xi: ologit demtoday  ilrctotal      , robust
 use ILRC_RegionandDem10pstforHappinessClassMERGE, clear
 xi: ologit dem10pst  ilrctotal      , robust
@@ -260,6 +261,10 @@ use ILRC_RegionandDemin10YrsforHappinessClassMERGE, clear
 xi: ologit dem10fut  ilrctotal      , robust
 
 //create a table for regression results 
+//for outreg, for one table just have 1dv, for another dv, make another table
+//also strart with bivariate, as you do, but then add more controls
+//so each subnsequent model has more controls and see what it does to coef on main iv
+//also check for heteroskedacity and fix it with robust
 use ILRC_RegionandDemTodayforHappinessClassMERGE, clear
 regress demtoday  ilrctotal
 outreg2 using ILRC_RegionandDemTodayforHappinessClassMERGE, replace ctitle(model 1)
