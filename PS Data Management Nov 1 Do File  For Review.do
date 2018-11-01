@@ -196,6 +196,10 @@ twoway (scatter take_jobs ilrctotal, msize(small) msymbol(circle_hollow) mlabel(
 
 //create a table for regression results 
 //something is not working here! what's wrong with the code?
+//again just have 1dv for all regressions in one set, keep on adding sequentially control vairables and see
+//what happens to the main iv
+//then start another new table with new dv and elaboprate model adding sequentially controls,and so on
+//in short one, the same one, dv (dependent variable), for each table
 use ILRC_RegionandTooToughforHappinessClassMERGE, clear
 regress too_tough ilrctotal
 outreg2 using ILRC_RegionandTooToughforHappinessClassMERGE, replace ctitle(model 1)
