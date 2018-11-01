@@ -129,6 +129,10 @@ tab affctlaw, mi // congress gives serious attention to r's demands: 10% likely;
 //keep a number of other variables of interest like...see below
 keep region excldimm immjobs immameco immcrime happy govdook conleg confed affctlaw uscitzn voteelec vote08 vote12 polint1 relig race dem10fut dem10pst demtoday attrally amgovt
 rename excldimm too_tough //How much do you agree or disagree with the following statement? 
+//just label them(briefly!): eg
+la var too_tough "tough measures against illegals" //and flip it with
+//findit revrs //https://www.stata.com/statalist/archive/2007-04/msg00520.html
+//so that it goes from lo to hi
 //America should take stronger measures to exclude illegal immigrants. 1=agree strongly to 5=disagree strongly
 rename immjobs take_jobs //There are different opinions about immigrants from other countries living in America. (By "immigrants" we mean people who come to settle in America.) How much do you agree or disagree with each of the following statements? 
 //Immigrants take jobs away from people who were born in America. 1=agree strongly to 5=disagree strongly.
@@ -298,7 +302,8 @@ l
 save ILRC_RegionandHappyforHappinessClassMERGE, replace
 twoway (scatter happy ilrctotal, msize(small) msymbol(circle_hollow) mlabel(state) mlabsize(vsmall)), ytitle(General happiness) xtitle(Sanctuary Status) title(Sanctuary Status and General Happiness), lfit happy ilrctotal, jitter(1)ms(Oh)note(Sanctuary jurisdictions enjoy greater general happiness.)
 twoway (scatter happy ilrctotal), ytitle(General happiness) xtitle(Sanctuary Status) title(Sanctuary Status and General Happiness), lfit happy ilrctotal, jitter(1)ms(Oh)note(Sanctuary jurisdictions enjoy greater general happiness.)
-//or should I keep the state labels and hollow circles?
+//or should I keep the state labels and hollow circles? //whichever way it is clearer, can do both anc compare
+//and maybe  keep both as they may be useful for different purposes
 //will need to control for other factors such as income, education and race
 
 ************************
