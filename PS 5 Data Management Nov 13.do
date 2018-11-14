@@ -174,6 +174,10 @@ drop if religion_important==.
 save YouGovKeyVariables, replace
 
 //Fix scales/order
+codebook imm_imp_issue //first have a look how it is coded
+revrs imm_imp_issue, replace //need to add replace
+codebook imm_imp_issue //and check again; looks good!
+
 revrs imm_imp_issue 
 revrs id_and_deport
 revrs increase_borderpatrol
@@ -188,6 +192,9 @@ save YouGovStatekeyVariables, replace
 
 //If I need to create dummies, here they are. These variables are 1=YES and 2=NO 
 //Do I need to REVERSE THE FIRST 4? 
+//simpller than that!:)
+replace id_and_deport=0 if id_and_deport==1
+
 generate prodeportation = (id_and_deport==1)
 generate upborderpatrol = (increase_borderpatrol==1)
 generate prolegalization = (grant_status==1)
@@ -223,6 +230,16 @@ table revimm_imp_issue id_and_deport increase_borderpatrol
 //Hypo: respondents who rank immigration as an important issue lean anti-immigrant.
 //Does it make sense to look closely at these via regressions?
 //Because these are YES or NOs, can I do this? I think so because they are aggregates and means.
+
+//do logit instead:
+logit  grant_status imm_imp_issue
+//see 
+//https://www.stata.com/manuals13/rlogit.pdf
+//https://stats.idre.ucla.edu/stata/webbooks/logistic/chapter1/logistic-regression-with-statachapter-1-introduction-to-logistic-regression-with-stata/
+//https://stats.idre.ucla.edu/stata/dae/using-margins-for-predicted-probabilities/
+
+
+
 reg grant_status imm_imp_issue, ro //Looks to be stat sig. R2 of only 8. 
 reg support_dreamers imm_imp_issue, ro //Looks to be stat sig. R2 of only 8.
 reg id_and_deport imm_imp_issue, ro //Looks to be stat sig. R2 of 16.
